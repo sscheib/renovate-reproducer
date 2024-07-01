@@ -1,8 +1,0 @@
-macOS
-Traceback
-README
-socio
-runtime
-sexualized
-Ansible
-mitigations

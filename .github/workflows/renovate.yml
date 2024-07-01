@@ -23,9 +23,6 @@ on:  # yamllint disable-line rule:truthy
           - 'error'
           - 'fatal'
 
-  schedule:
-    - cron: '0 */3 * * *'
-
 # Declare default permissions as read only
 permissions: 'read-all'
 

@@ -2,62 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "helpers:pinGitHubActionDigests",
     "docker:pinDigests"
   ],
   "assignees": [
     "sscheib"
   ],
-  "timezone": "Europe/Berlin",
-  "osvVulnerabilityAlerts": true,
-  "dependencyDashboardOSVVulnerabilitySummary": "all",
   "packageRules": [
-    {
-      "matchFileNames": [
-        ".github/workflows/*.yml",
-        "collections/requirements.yml",
-        "roles/requirements.yml",
-        "requirements.yml",
-        "requirements.txt"
-      ],
-      "major": {
-        "enabled": true
-      },
-      "minor": {
-        "enabled": true
-      },
-      "rangeStrategy": "bump"
-    },
-    {
-      "description": "Allow updating molecule packages to higher versions, but exclude execution environments",
-      "matchFileNames": [
-        ".github/workflows/molecule.yml"
-      ],
-      "minor": {
-        "enabled": true
-      },
-      "major": {
-        "enabled": true
-      },
-      "rangeStrategy": "bump",
-      "excludeDepNames": [
-        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8",
-        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9"
-      ]
-    },
-    {
-      "description": "Molecule version 6.y.z should only receive minor updates. Otherwise this would cause dependency issues in later Ansible Core versions",
-      "matchDatasources": [
-        "pypi"
-      ],
-      "matchPackageNames": [
-        "molecule"
-      ],
-      "matchCurrentVersion": "<7.0.0",
-      "major": {
-        "enabled": false
-      }
-    },
     {
       "description": "Update execution environments only on the patch level",
       "matchDepNames": [
@@ -76,37 +26,6 @@
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.+(?<patch>\\d+)(?<build>-\\d+)?$",
       "rangeStrategy": "bump"
     },
-    {
-      "description": "These collections should be retrieved from console.redhat.com",
-      "matchDatasources": [
-        "galaxy-collections"
-      ],
-      "matchDepNames": [
-        "ansible.controller",
-        "ansible.posix",
-        "ansible.utils",
-        "redhat.satellite",
-        "zabbix.zabbix"
-      ],
-      "registryUrls": [
-        "https://console.redhat.com/api/automation-hub/content/published/",
-        "https://console.redhat.com/api/automation-hub/content/validated/"
-      ]
-    },
-    {
-      "description": "Update renovate related dependencies once a week to avoid spamming",
-      "matchDepNames": [
-        "renovatebot/pre-commit-hooks",
-        "renovatebot/renovate"
-      ],
-      "schedule": [
-        "on sunday"
-      ]
-    }
-  ],
-  "pre-commit": {
-    "enabled": true
-  },
   "customManagers": [
     {
       "description": "Extract execution environments defined via image:",
@@ -119,40 +38,6 @@
       ],
       "autoReplaceStringTemplate": "image: '\{{{depName}}}:{{{newValue}}}{{#if newDigest}}@{{{newDigest}}}{{/if}}\'",
       "datasourceTemplate": "docker"
-    },
-    {
-      "description": "Extract in-line dependencies for Python and NodeJS",
-      "customType": "regex",
-      "fileMatch": [
-        "^.pre-commit-config.yaml$",
-        "^.github/workflows/.*?\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))?\\s+-\\s+['\"]?(?<depName>[^=@:]+)(?:(?:==|@|:)\\s?(?<currentValue>[^'\"\\s]*))?"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-    },
-    {
-      "description": "Extract in-line dependencies defined in YAML, e.g. molecule: 'X.Y.Z'",
-      "customType": "regex",
-      "fileMatch": [
-        "^.github/workflows/.*?\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "# renovate yaml: datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))?\\s+(?<depName>[^:]+):\\s+?'(?:(?<currentValue>[^'\"\\s]*))?"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-    },
-    {
-      "description": "Extract renovate container version",
-      "customType": "regex",
-      "fileMatch": [
-        "^.github/workflows/renovate\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "# renovate self-update: datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))? depName=(?<depName>[^\\s]+) registryUrl=(?<registryUrl>.*?)\\s+renovate-version:\\s'(?<currentValue>[^']*)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ]
 }
