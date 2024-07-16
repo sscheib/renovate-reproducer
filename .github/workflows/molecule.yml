@@ -67,7 +67,7 @@ jobs:
             molecule: '24.6.0'
 
           # yamllint disable-line rule:line-length
-          - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.16.8@sha256:22e6773b832d01602a6d822f8c947c79d46c6b932a466874776929adf39e7ed2'
+          - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.16.8@sha256:d86deca37ce5995b543b490f635c7efb2764f735101d2c8951e6068095ac570a'
             cache_key_suffix: 'rhel8-2.16'
             # renovate yaml: datasource=pypi
             molecule: '24.6.0'
