@@ -169,7 +169,7 @@ jobs:
           tar -czf "${cache_archive}" -C "${cache_dir}" .
 
       - name: 'Upload compressed cache'
-        uses: 'actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808' # v4.3.3
+        uses: 'actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b' # v4.3.4
         if: "github.event.inputs.repoCache != 'disabled'"
         with:
           name: '${{ env.cache_key }}-${{ matrix.container.cache_key_suffix }}'
