@@ -60,6 +60,17 @@
       ],
       "autoReplaceStringTemplate": "image: '{{{depName}}}:{{{newValue}}}{{#if newDigest}}@{{{newDigest}}}{{/if}}'",
       "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Extract in-line dependencies for Python",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.pre-commit-config\\.yaml$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?)(\\sversioning=(?<versioning>.*?))?\\s+-\\s+['\"]?(?<depName>[^=@]+)(?:==|@)\\s{0,}(?<currentValue>[^'\"\\s\\n]+)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ]
 }
