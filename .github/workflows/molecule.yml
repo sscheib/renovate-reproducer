@@ -23,7 +23,7 @@ jobs:
       matrix:
         container:
           # yamllint disable-line rule:line-length
-          - image: 'ghcr.io/ansible-community/community-ee-base:2.16.6-1@sha256:742e6eb0ffde84f8a1c916a5eae217da317b4a4705a7636c70696bcd7f6a8cdd'
+          - image: 'ghcr.io/ansible-community/community-ee-base:2.16.6-1'
     steps:
       - name: 'Install NodeJS'
         uses: 'actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b' # v4.0.3
