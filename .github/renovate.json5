@@ -12,7 +12,8 @@
       "description": "Update execution environments only on the patch level",
       "matchDepNames": [
         "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8",
-        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9"
+        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9",
+        "ghcr.io/ansible-community/community-ee-base"
       ],
       "major": {
         "enabled": false
