@@ -281,9 +281,9 @@
       "description": "Extract execution environments and molecule platforms defined via image:",
       "customType": "regex",
       "fileMatch": [
-        "^\\.github/workflows/wf_call_molecule_certified_ees.\\ya?ml$",
         "^\\.github/workflows/molecule_community_ees\\.ya?ml$",
         "^\\.github/workflows/docs_image\\.ya?ml$",
+        "^\\.github/workflows/wf_call_molecule_certified_ees\\.ya?ml$",
         "^molecule/default/molecule\\.ya?ml$"
       ],
       "matchStrings": [
