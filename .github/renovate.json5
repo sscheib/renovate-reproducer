@@ -2,11 +2,21 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "docker:pinDigests"
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
+    "mergeConfidence:all-badges",
+    ":gitSignOff"
   ],
   "assignees": [
     "sscheib"
   ],
+  "timezone": "Europe/Berlin",
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "commitMessageLowerCase": "never",
+  "regex": {
+    "pinDigests": true
+  },
   "separateMajorMinor": true,
   "separateMinorPatch": true,
   "separateMultipleMajor": true,
@@ -33,6 +43,55 @@
       },
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.+(?<patch>\\d+)(?<build>-\\d+)?$",
       "rangeStrategy": "bump"
+    },
+    {
+      "description": "Allow updating molecule packages to higher versions, but exclude execution environments",
+      "matchFileNames": [
+        ".github/workflows/wf_call_molecule_certified_ees.yaml",
+        ".github/workflows/wf_call_molecule_certified_ees.yml",
+        ".github/workflows/molecule_community_ees.yaml",
+        ".github/workflows/molecule_community_ees.yml"
+      ],
+      "minor": {
+        "enabled": true
+      },
+      "major": {
+        "enabled": true
+      },
+      "rangeStrategy": "bump",
+      "matchDepNames": [
+        "!registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8",
+        "!registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9",
+        "!ghcr.io/ansible-community/community-ee-base"
+      ]
+    },
+    {
+      "description": "Update UBI images only on the minor and patch level",
+      "matchDepNames": [
+        "registry.access.redhat.com/ubi9/ubi",
+        "registry.access.redhat.com/ubi9/podman",
+        "registry.access.redhat.com/ubi8/ubi",
+        "registry.access.redhat.com/ubi7/ubi"
+      ],
+      "major": {
+        "enabled": false
+      },
+      "minor": {
+        "enabled": true
+      },
+      "patch": {
+        "enabled": true
+      },
+      "versioning": "redhat",
+      "rangeStrategy": "bump",
+      "groupName": "RHEL UBI molecule images"
+    },
+    {
+      "description": "Remove container registry names to avoid too long commit message subjects",
+      "matchDatasources": [
+        "docker"
+      ],
+      "commitMessageTopic": "{{{replace '(?:registry(?:\.access)?\.redhat\.(?:io|com)|docker\.io|ghcr\.io)\/' '' depName}}}"
     }
   ],
   "customManagers": [
