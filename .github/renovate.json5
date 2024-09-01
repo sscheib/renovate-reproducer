@@ -11,6 +11,9 @@
   "separateMinorPatch": true,
   "separateMultipleMajor": true,
   "separateMultipleMinor": true,
+  "enabledManagers": [
+    "regex"
+  ],
   "packageRules": [
     {
       "description": "Update execution environments only on the patch level",
@@ -30,27 +33,6 @@
       },
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.+(?<patch>\\d+)(?<build>-\\d+)?$",
       "rangeStrategy": "bump"
-    },
-    {
-      "description": "Limit Ansible Core in pre-commit to patch updates",
-      "matchDepNames": [
-        "ansible-core"
-      ],
-      "matchFileNames": [
-        "^\\.pre-commit-config\\.yaml$"
-      ],
-      "matchDatasources": [
-        "pypi"
-      ],
-      "major": {
-        "enabled": false
-      },
-      "minor": {
-        "enabled": false
-      },
-      "patch": {
-        "enabled": true
-      }
     }
   ],
   "customManagers": [
@@ -65,17 +47,6 @@
       ],
       "autoReplaceStringTemplate": "image: '{{{depName}}}:{{{newValue}}}{{#if newDigest}}@{{{newDigest}}}{{/if}}'",
       "datasourceTemplate": "docker"
-    },
-    {
-      "description": "Extract in-line dependencies for Python",
-      "customType": "regex",
-      "fileMatch": [
-        "^\\.pre-commit-config\\.yaml$"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?)(\\sversioning=(?<versioning>.*?))?\\s+-\\s+['\"]?(?<depName>[^=@]+)(?:==|@)\\s{0,}(?<currentValue>[^'\"\\s\\n]+)"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ]
 }
