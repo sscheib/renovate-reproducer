@@ -17,32 +17,63 @@
   "regex": {
     "pinDigests": true
   },
+  "pre-commit": {
+    "enabled": true
+  },
+  "internalChecksFilter": "strict",
+  "bundler": {
+    "fileMatch": [
+      "^docs/Gemfile$",
+      "^docs/Gemfile.lock$"
+    ]
+  },
   "separateMajorMinor": true,
   "separateMinorPatch": true,
   "separateMultipleMajor": true,
   "separateMultipleMinor": true,
-  "enabledManagers": [
-    "regex"
-  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": [
+      "* 18-22 * * 7"
+    ]
+  },
   "packageRules": [
     {
-      "description": "Update execution environments only on the patch level",
-      "matchDepNames": [
-        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8",
-        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9",
-        "ghcr.io/ansible-community/community-ee-base"
+      "matchFileNames": [
+        ".github/workflows/**",
+        ".pre-commit-config.yaml",
+        "collections/requirements.yaml",
+        "collections/requirements.yml",
+        "roles/requirements.yaml",
+        "roles/requirements.yml",
+        "requirements.txt",
+        "requirements.yaml",
+        "requirements.yml"
       ],
       "major": {
-        "enabled": false
-      },
-      "minor": {
-        "enabled": false
-      },
-      "patch": {
         "enabled": true
       },
-      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.+(?<patch>\\d+)(?<build>-\\d+)?$",
+      "minor": {
+        "enabled": true
+      },
       "rangeStrategy": "bump"
+    },
+    {
+      "description": "Enable auto-merge for minor and patch updates but exclude version 0.x, as these can introduce breaking changes at any time as per SemVer conventions",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "matchManagers": [
+        "bundler"
+      ],
+      "rangeStrategy": "update-lockfile",
+      "groupName": "Bundler dependencies"
     },
     {
       "description": "Allow updating molecule packages to higher versions, but exclude execution environments",
@@ -66,6 +97,75 @@
       ]
     },
     {
+      "description": "Molecule version 6.y.z should only receive minor updates. Otherwise this would cause dependency issues in later Ansible Core versions",
+      "matchDatasources": [
+        "pypi"
+      ],
+      "matchPackageNames": [
+        "molecule"
+      ],
+      "matchCurrentVersion": "<7.0.0",
+      "major": {
+        "enabled": false
+      }
+    },
+    {
+      "description": "Update execution environments only on the patch level",
+      "matchDepNames": [
+        "ghcr.io/ansible-community/community-ee-base",
+        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8",
+        "registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9"
+      ],
+      "major": {
+        "enabled": false
+      },
+      "minor": {
+        "enabled": false
+      },
+      "patch": {
+        "enabled": true
+      },
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.+(?<patch>\\d+)(?<build>-\\d+)?$",
+      "rangeStrategy": "bump",
+      "groupName": "execution environments"
+    },
+    {
+      "description": "Update Debian images only on the minor and patch level",
+      "matchDepNames": [
+        "docker.io/debian"
+      ],
+      "major": {
+        "enabled": false
+      },
+      "minor": {
+        "enabled": true
+      },
+      "patch": {
+        "enabled": true
+      },
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)$",
+      "rangeStrategy": "bump",
+      "groupName": "Debian molecule images"
+    },
+    {
+      "description": "Update OpenWrt images only on the minor and patch level",
+      "matchDepNames": [
+        "docker.io/openwrt/rootfs"
+      ],
+      "major": {
+        "enabled": false
+      },
+      "minor": {
+        "enabled": true
+      },
+      "patch": {
+        "enabled": true
+      },
+      "versioning": "regex:^x86_64(?:-openwrt)?-(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?$",
+      "rangeStrategy": "bump",
+      "groupName": "OpenWrt molecule images"
+    },
+    {
       "description": "Update UBI images only on the minor and patch level",
       "matchDepNames": [
         "registry.access.redhat.com/ubi9/ubi",
@@ -87,11 +187,93 @@
       "groupName": "RHEL UBI molecule images"
     },
     {
+      "description": "These collections should be retrieved from console.redhat.com",
+      "matchDatasources": [
+        "galaxy-collections"
+      ],
+      "matchDepNames": [
+        "ansible.controller",
+        "ansible.posix",
+        "ansible.utils",
+        "redhat.satellite",
+        "zabbix.zabbix"
+      ],
+      "registryUrls": [
+        "https://console.redhat.com/api/automation-hub/content/published/",
+        "https://console.redhat.com/api/automation-hub/content/validated/"
+      ]
+    },
+    {
+      "description": "Update renovate related dependencies once a week to avoid spamming",
+      "matchDepNames": [
+        "renovatebot/github-action",
+        "renovatebot/pre-commit-hooks",
+        "renovatebot/renovate",
+        "renovate"
+      ],
+      "groupName": "renovate",
+      "pinDigests": false,
+      "schedule": [
+        "* 18-22 * * 7"
+      ],
+      "separateMajorMinor": false,
+      "separateMinorPatch": false,
+      "separateMultipleMajor": false,
+      "separateMultipleMinor": false
+    },
+    {
       "description": "Remove container registry names to avoid too long commit message subjects",
       "matchDatasources": [
         "docker"
       ],
       "commitMessageTopic": "{{{replace '(?:registry(?:\.access)?\.redhat\.(?:io|com)|docker\.io|ghcr\.io)\/' '' depName}}}"
+    },
+    {
+      "description": "Wait three weeks for Python updates to allow GitHub action setup-python to include the latest version",
+      "matchFileNames": [
+        ".github/workflows/pre-commit.yaml",
+        ".github/workflows/pre-commit.yml"
+      ],
+      "matchDatasources": [
+        "python-version"
+      ],
+      "minimumReleaseAge": "21 days"
+    },
+    {
+      "description": "Enable auto-merge specifically for selected dependencies as they are versioned in the 0.x version range",
+      "matchDepNames": [
+        "python-jsonschema/check-jsonschema",
+        "rojopolis/spellcheck-github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Limit Ansible Core in pre-commit to version <2.17 as it breaks RHEL 8 support pre-commit",
+      "matchDepNames": [
+        "ansible-core"
+      ],
+      "matchFileNames": [
+        ".pre-commit-config.yaml"
+      ],
+      "matchDatasources": [
+        "pypi"
+      ],
+      "allowedVersions": "<2.17"
+    },
+    {
+      "matchDepNames": [
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "major": {
+        "dependencyDashboardApproval": true
+      }
     }
   ],
   "customManagers": [
@@ -99,13 +281,85 @@
       "description": "Extract execution environments and molecule platforms defined via image:",
       "customType": "regex",
       "fileMatch": [
-        "^\\.github/workflows/molecule\\.ya?ml$"
+        "^\\.github/workflows/molecule_certified_ees\\.ya?ml$",
+        "^\\.github/workflows/molecule_community_ees\\.ya?ml$",
+        "^\\.github/workflows/docs_image\\.ya?ml$",
+        "^molecule/default/molecule\\.ya?ml$"
       ],
       "matchStrings": [
         "image:\\s\'(?<depName>[^:\"']+):(?<currentValue>[^@\"']+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\'"
       ],
       "autoReplaceStringTemplate": "image: '{{{depName}}}:{{{newValue}}}{{#if newDigest}}@{{{newDigest}}}{{/if}}'",
       "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Extract in-line dependencies for Python and NodeJS",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.pre-commit-config\\.yaml$",
+        "^\\.github/workflows/.+?\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?)(\\sversioning=(?<versioning>.*?))?\\s+-\\s+['\"]?(?<depName>[^=@]+)(?:==|@)\\s{0,}(?<currentValue>[^'\"\\s\\n]+)",
+        "# renovate: datasource=(?<datasource>.*?)(\\sversioning=(?<versioning>.*?))?\\s+?(?:npm|pip[^\\s]+?)\\s+?install\\s+?(?<depName>[^=@]+)(?:(?:==|@)\\s?)(?<currentValue>[^\\s\\n]+)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Extract in-line dependencies defined in YAML, e.g. molecule: 'X.Y.Z'",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.github/workflows/.*?\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "# renovate yaml: datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))?\\s+(?<depName>[^:]+):\\s+?'(?:(?<currentValue>[^'\"\\s]*))?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Extract custom dependency definitions",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.github/workflows/.+?\\.ya?ml$",
+        "^\\.pre-commit-config\\.yaml$"
+      ],
+      "matchStrings": [
+        "# renovate dep: datasource=(?<datasource>.*?)(\\s+?versioning=(?<versioning>.*?))?\\s+?depName=(?<depName>[^\\s]+)(?:\\s+registryUrl=(?<registryUrl>.*?))?\\s+[\\w_:-]+\\s?['\"]?(?<currentValue>[^']*)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Extract renovate container version",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.github/workflows/renovate\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "# renovate self-update: datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))? depName=(?<depName>[^\\s]+) registryUrl=(?<registryUrl>.*?)\\s+renovate-version:\\s'(?<currentValue>[^']*)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Extract Jekyll docs image",
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.github/workflows/github_pages\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "\\s+?jekyll_image:\\s+?[\\'\"](?<depName>[^:]+):(?<currentValue>[^@]+)@(?<currentDigest>[^\\'\"]+)"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Extract dependencies in Containerfiles specified via ENV PACKAGE_NAME_VERSION=\"N\"",
+      "customType": "regex",
+      "fileMatch": [
+        "^docs/Containerfile$"
+      ],
+      "matchStrings": [
+        "# renovate:\\s+?datasource=(?<datasource>.+?)\\s+?depName=(?<depName>.+?)(\\s+?versioning=(?<versioning>.+?))?\\s+?ENV\\s+?.+?_VERSION=\"(?<currentValue>.*)\"(?:\\s+)?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ]
 }
