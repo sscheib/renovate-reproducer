@@ -7,6 +7,10 @@
   "assignees": [
     "sscheib"
   ],
+  "separateMajorMinor": true,
+  "separateMinorPatch": true,
+  "separateMultipleMajor": true,
+  "separateMultipleMinor": true,
   "packageRules": [
     {
       "description": "Update execution environments only on the patch level",

@@ -16,14 +16,14 @@ jobs:
     container:
       image: '${{ matrix.container.image }}'
       credentials:
-        username: '${{ github.actor }}'
-        password: '${{ secrets.GITHUB_TOKEN }}'
-      options: '--user root --privileged'
+        username: '${{ secrets.crc_username }}'
+        password: '${{ secrets.crc_password }}'
+      options: '--privileged'
     strategy:
       matrix:
         container:
           # yamllint disable-line rule:line-length
-          - image: 'ghcr.io/ansible-community/community-ee-base:2.16.6-1@sha256:742e6eb0ffde84f8a1c916a5eae217da317b4a4705a7636c70696bcd7f6a8cdd'
+          - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.16.8-5@sha256:5728903400b4b797eb697c1db419f2676d4a2aa67404f1e6f6a15d8f6c3d0252'
     steps:
       - name: 'Install NodeJS'
         uses: 'actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b' # v4.0.3
