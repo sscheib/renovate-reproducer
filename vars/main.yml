@@ -1,7 +1,0 @@
----
-# Packages to install
-_fd_files: '{{ fd_files | mandatory }}'
-
-# Whether to quiet assert statements
-_fd_quiet_assert: '{{ fd_quiet_assert | default(_def_fd_quiet_assert) }}'
-...

@@ -1,4 +1,0 @@
----
-# Whether to quiet assert statements
-_def_fd_quiet_assert: false
-...
