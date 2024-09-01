@@ -76,9 +76,9 @@ jobs:
         uses: 'renovatebot/github-action@b266b24b144602ed4f512f0773009d026722f4cc' # v40.2.6
         with:
           # yamllint disable-line rule:line-length
-          renovate-version: '38.52.2'
+          renovate-version: '38.52.3'
           configurationFile: '.github/renovate_global.js'
-          token: '${{ secrets.renovate_token }}'
+          token: '${{ secrets.RENOVATE_TOKEN }}'
         env:
           RENOVATE_REPOSITORIES: '${{ github.repository }}'
           RENOVATE_CRC_USERNAME: '${{ secrets.CRC_USERNAME }}'
