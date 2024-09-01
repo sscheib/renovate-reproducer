@@ -23,7 +23,7 @@ jobs:
       matrix:
         container:
           - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.17.1-5@sha256:96e1594b2956cc14443c58f441097e53df54f50c88ae0e01d6a948158beb1b8f'
-          - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.16.8-5@sha256:5728903400b4b797eb697c1db419f2676d4a2aa67404f1e6f6a15d8f6c3d0252'
+          - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.16.9@sha256:c24f160adbaf09000d4fea3300741b0b5a5d961d921684c089c116767bd2e7e3'
           - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.15@sha256:1be81d9d69d43700dc46ff95084c845191ff0146bf90ceb69e612b674487dd94'
           - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.14@sha256:8073b374c3654488c515770f82e2d3a4d293ad7f428eef36399a04b36899227d'
           - image: 'registry.redhat.io/ansible-automation-platform/ee-minimal-rhel8:2.13@sha256:8e67f956ffb1dba10773c458831c7b9241aeb7b2862e64e8f37220e562e5e96f'
